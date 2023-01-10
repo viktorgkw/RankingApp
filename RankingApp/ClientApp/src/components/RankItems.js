@@ -1,11 +1,14 @@
 ﻿import React, { useState, useEffect } from 'react';
-import MovieImageArr from './MovieImages.js'
 import RankingGrid from './RankingGrid.js';
 import ItemCollection from './ItemCollection.js';
 
-const RankItems = () => {
-    const [items, setItems] = useState([]);
-    const dataType = 1;
+const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
+
+    const [unrank, setUnrank] = useState(false);
+
+    function Unrank() {
+        setUnrank(true);
+    }
 
     function drag(ev) {
         ev.dataTransfer.setData("text", ev.target.id);
@@ -34,6 +37,12 @@ const RankItems = () => {
     }
 
     useEffect(() => {
+        if (items == null) {
+            getDataFromApi();
+        }
+    }, [dataType]);
+
+    function getDataFromApi() {
         fetch(`item/${dataType}`)
             .then(results => {
                 return results.json();
@@ -41,15 +50,31 @@ const RankItems = () => {
             .then(data => {
                 setItems(data);
             })
-    }, []);
+    }
+
+    useEffect(() => {
+        if (items != null) {
+            localStorage.setItem(localStorageKey, JSON.stringify(items));
+        }
+        setUnrank(false);
+    }, [items]);
+
+    useEffect(() => {
+        if (unrank) {
+            getDataFromApi();
+        }
+    }, [unrank]);
 
     return (
-        (items != null) ?
+        (items != null)
+            ?
             <main>
-                <RankingGrid items={items} imgArr={MovieImageArr} drag={drag} allowDrop={allowDrop} drop={drop} />
-                <ItemCollection items={items} drag={drag} imgArr={MovieImageArr} />
+                <RankingGrid items={items} imgArr={imgArr} drag={drag} allowDrop={allowDrop} drop={drop} />
+                <ItemCollection items={items} drag={drag} imgArr={imgArr} />
+                <button onClick={Unrank} style={{ "marginTop": "10px" }}>Unrank Items</button>
             </main>
-            : <main>Loading...</main>
+            :
+            <main>Loading...</main>
     )
 }
 
