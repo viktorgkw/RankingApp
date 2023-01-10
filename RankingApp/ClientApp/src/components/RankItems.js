@@ -71,7 +71,7 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
             <main>
                 <RankingGrid items={items} imgArr={imgArr} drag={drag} allowDrop={allowDrop} drop={drop} />
                 <ItemCollection items={items} drag={drag} imgArr={imgArr} />
-                <button onClick={Unrank} style={{ "marginTop": "10px" }}>Unrank Items</button>
+                <button class="button-19" role="button" onClick={Unrank} style={{ "marginTop": "10px" }}>Unrank Items</button>
             </main>
             :
             <main>Loading...</main>
